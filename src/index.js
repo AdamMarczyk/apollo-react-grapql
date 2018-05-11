@@ -6,6 +6,7 @@ import { ApolloClient } from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
 import { HttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
+import { RetryLink } from 'apollo-link-retry';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import App from './App';
 import './style.css';
@@ -29,7 +30,9 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 });
 
-const link = ApolloLink.from([errorLink, httpLink]);
+const retryLink = new RetryLink();
+
+const link = ApolloLink.from([errorLink, httpLink, retryLink]);
 
 const cache = new InMemoryCache();
 
