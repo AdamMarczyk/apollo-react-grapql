@@ -6,8 +6,8 @@ import Button from '../../Button';
 import '../style.css';
 
 const STAR_REPOSITORY = gql`
-  mutation($id: $ID!) {
-    addStar(input: {starrableId: $id}) {
+  mutation($id: ID!) {
+    addStar(input: { starrableId: $id }) {
       starrable {
         id
         viewerHasStarred
