@@ -4,6 +4,7 @@ import registerServiceWorker from './registerServiceWorker';
 import { ApolloProvider } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
+import { onError } from 'apollo-link-error';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import App from './App';
 import './style.css';
@@ -15,6 +16,16 @@ const httpLink = new HttpLink({
   headers: {
     authorization: `Bearer ${process.env.REACT_APP_GITHUB_PERSONAL_ACCESS_TOKEN}`
   },
+});
+
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    // do something with graphql error
+  }
+
+  if (networkError) {
+    // do something with network error
+  }
 });
 
 const cache = new InMemoryCache();
