@@ -16,7 +16,7 @@ const httpLink = new HttpLink({
   },
 });
 
-
+const cache = new InMemoryCache();
 
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();
