@@ -18,5 +18,10 @@ const httpLink = new HttpLink({
 
 const cache = new InMemoryCache();
 
+const client = new ApolloClient({
+  link: httpLink,
+  cache,
+});
+
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();
