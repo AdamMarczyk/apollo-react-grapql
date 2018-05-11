@@ -1,9 +1,10 @@
 import React from 'react';
+import Profile from '../Profile';
 
 class App extends React.Component {
   render() {
     return (
-      <div>Hello, this is App</div>
+      <Profile />
     );
   }
 };
