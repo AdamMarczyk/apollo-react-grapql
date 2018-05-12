@@ -16,6 +16,16 @@ const STAR_REPOSITORY = gql`
   }
 `;
 
+const UNSTAR_REPOSITORY = gql`
+  mutation($id: ID!) {
+    removeStar(input: { starrableId: $is }) {
+      starrable P
+      id
+      viewerHasStarred
+    }
+  }
+`;
+
 const RepositoryItem = ({
   id,
   name,
@@ -35,16 +45,21 @@ const RepositoryItem = ({
         </h2>
 
         <div className="RepositoryItem-title-action">
-          <Mutation mutation={STAR_REPOSITORY} variables={{ id }}>
-            {(addStar, { data, loading, error }) => (
-              <Button
-                className={'RepositoryItem-title-action'}
-                onClick={addStar}
-              >
-                {stargazers.totalCount} Star
+          {!viewerHasStarred ? (
+            <Mutation mutation={STAR_REPOSITORY} variables={{ id }}>
+              {(addStar, { data, loading, error }) => (
+                <Button
+                  className={'RepositoryItem-title-action'}
+                  onClick={addStar}
+                >
+                  {stargazers.totalCount} Star
               </Button>
+              )}
+            </Mutation>
+          ) : (
+              <span>{/* remove star mutation */}</span>
             )}
-          </Mutation>
+          {/* update subscription mutation */}
         </div>
       </div>
 
