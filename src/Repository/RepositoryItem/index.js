@@ -20,9 +20,10 @@ const STAR_REPOSITORY = gql`
 const UNSTAR_REPOSITORY = gql`
   mutation($id: ID!) {
     removeStar(input: { starrableId: $is }) {
-      starrable P
-      id
-      viewerHasStarred
+      starrable {
+        id
+        viewerHasStarred
+      }
     }
   }
 `;
@@ -137,12 +138,9 @@ const RepositoryItem = ({
             optimisticResponse={{
               updateSubscription: {
                 __typename: 'Mutation',
-                subscribable: {
+                starrable: {
                   __typename: 'Repository',
-                  id,
-                  viewerSubscription: isWatch(viewerSubscription)
-                    ? VIEWER_SUBSCRIPTIONS.SUBSCRIBED
-                    : VIEWER_SUBSCRIPTIONS.UNSUBSCRIBED,
+                  id
                 },
               },
             }}
@@ -162,6 +160,18 @@ const RepositoryItem = ({
             <Mutation
               mutation={STAR_REPOSITORY}
               variables={{ id }}
+              optimisticResponse={{
+                addStar: {
+                  __typename: 'Mutation',
+                  subscribable: {
+                    __typename: 'Repository',
+                    id,
+                    viewerSubscription: isWatch(viewerSubscription)
+                      ? VIEWER_SUBSCRIPTIONS.SUBSCRIBED
+                      : VIEWER_SUBSCRIPTIONS.UNSUBSCRIBED,
+                  },
+                },
+              }}
               update={updateAddStar}
             >
               {(addStar, { data, loading, error }) => (
@@ -176,7 +186,6 @@ const RepositoryItem = ({
           ) : (
               <span>{/* remove star mutation */}</span>
             )}
-          {/* update subscription mutation */}
         </div>
       </div>
 
