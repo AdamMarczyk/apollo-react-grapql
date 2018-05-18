@@ -134,6 +134,18 @@ const RepositoryItem = ({
                 ? VIEWER_SUBSCRIPTIONS.UNSUBSCRIBED
                 : VIEWER_SUBSCRIPTIONS.SUBSCRIBED,
             }}
+            optimisticResponse={{
+              updateSubscription: {
+                __typename: 'Mutation',
+                subscribable: {
+                  __typename: 'Repository',
+                  id,
+                  viewerSubscription: isWatch(viewerSubscription)
+                    ? VIEWER_SUBSCRIPTIONS.SUBSCRIBED
+                    : VIEWER_SUBSCRIPTIONS.UNSUBSCRIBED,
+                },
+              },
+            }}
             update={updateWatch}
           >
             {(updateSubscription, { data, loading, error }) => (
@@ -188,7 +200,7 @@ const RepositoryItem = ({
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 
 export default RepositoryItem;
