@@ -2,6 +2,27 @@ import React, { Fragment } from 'react';
 import RepositoryItem from '../RepositoryItem';
 import '../style.css';
 
+const updateQuery = (previousResult, { fetchMoreResult }) => {
+  if (!fetchMoreResult) {
+    return previousResult;
+  }
+
+  return {
+    ...previousResult,
+    viewer: {
+      ...previousResult.viewer,
+      repositories: {
+        ...previousResult.viewer.repositories,
+        ...fetchMoreResult.viewer.repositories,
+        edges: [
+          ...previousResult.viewer.repositories.edges,
+          ...fetchMoreResult.viewer.repositories.edges,
+        ],
+      },
+    },
+  }
+};
+
 const RepositoryList = ({ repositories, fetchMore }) => (
   <Fragment>
     {repositories.edges.map(({ node }) => (
@@ -14,7 +35,9 @@ const RepositoryList = ({ repositories, fetchMore }) => (
         type="button"
         onClick={() =>
           fetchMore({
-            /* */
+            variables: {
+              cursor: repositories.pageInfo.endCursor,
+            },
           })
         }
       >
