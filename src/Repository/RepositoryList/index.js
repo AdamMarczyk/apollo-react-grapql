@@ -38,6 +38,7 @@ const RepositoryList = ({ repositories, fetchMore }) => (
             variables: {
               cursor: repositories.pageInfo.endCursor,
             },
+            updateQuery
           })
         }
       >
