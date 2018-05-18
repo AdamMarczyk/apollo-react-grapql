@@ -27,6 +27,62 @@ const UNSTAR_REPOSITORY = gql`
   }
 `;
 
+const WATCH_REPOSITORY = gql`
+  mutation($id: ID!, $viewerSubscription: SubscriptionState!) {
+    updateSubscription(
+      input: { state: $viewerSubscription, subscribableId: $id }
+    ) {
+      subscribable {
+        id
+        viewerSubscription
+      }
+    }
+  }
+`;
+
+const VIEWER_SUBSCRIPTIONS = {
+  SUBSCRIBED: 'SUBSCRIBED',
+  UNSUBSCRIBED: 'UNSUBSCRIBED',
+};
+
+const isWatch = viewerSubscription => {
+  viewerSubscription === viewerSubscription.SUBSCRIBED;
+};
+
+const updateWatch = (
+  client,
+  {
+    data: {
+      updateSubscription: {
+        subscribable: { id, viewerSubscription },
+      },
+    },
+  },
+) => {
+  const repository = client.readFragment({
+    id: `Repository:${id}`,
+    fragment: REPOSITORY_FRAGMENT,
+  });
+
+  let { totalCount } = repository.watchers;
+  totalCount =
+    viewerSubscription === VIEWER_SUBSCRIPTIONS.SUBSCRIBED
+      ? totalCount + 1
+      : totalCount - 1;
+
+  client.writeFragment({
+    id: `Repository:${id}`,
+    fragment: REPOSITORY_FRAGMENT,
+    data: {
+      ...repository,
+      watchers: {
+        ...repository.watchers,
+        totalCount,
+      },
+    },
+  });
+};
+
 const updateAddStar = (
   client,
   { data: { addStar: { starrable: { id } } } }
@@ -70,6 +126,26 @@ const RepositoryItem = ({
         </h2>
 
         <div className="RepositoryItem-title-action">
+          <Mutation
+            mutation={WATCH_REPOSITORY}
+            variables={{
+              id,
+              viewerSubscription: isWatch(viewerSubscription)
+                ? VIEWER_SUBSCRIPTIONS.UNSUBSCRIBED
+                : VIEWER_SUBSCRIPTIONS.SUBSCRIBED,
+            }}
+            update={updateWatch}
+          >
+            {(updateSubscription, { data, loading, error }) => (
+              <Button
+                className="RepositoryItem-title-action"
+                onClick={updateSubscription}
+              >
+                {watchers.totalCount}{' '}
+                {isWatch(viewerSubscription) ? 'Unwatch' : 'Watch'}
+              </Button>
+            )}
+          </Mutation>
           {!viewerHasStarred ? (
             <Mutation
               mutation={STAR_REPOSITORY}
