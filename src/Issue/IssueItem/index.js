@@ -18,7 +18,10 @@ const IssueItem = ({
           onToggleComments(() => !showComments)
         }
       >
-        Show/Hide Comments
+        {showComments
+          ? 'Hide'
+          : 'Show'
+        } Comments
     </ButtonUnobtrusive>
 
       <div className="IssueItem-content">
