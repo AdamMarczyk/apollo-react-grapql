@@ -21,7 +21,9 @@ class App extends React.Component {
               path={routes.ORGANIZATION}
               component={() => (
                 <div className="App-content_large-header">
-                  <Organization />
+                  <Organization
+                    organizationName={'facebook'}
+                  />
                 </div>
               )}
             />
