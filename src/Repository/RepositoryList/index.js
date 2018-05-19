@@ -2,6 +2,8 @@ import React, { Fragment } from 'react';
 import Loading from '../../Loading';
 import FetchMore from '../../FetchMore';
 import RepositoryItem from '../RepositoryItem';
+import Issues from '../../Issue';
+
 import '../style.css';
 
 const getUpdateQuery = entry => (
@@ -38,6 +40,10 @@ const RepositoryList = ({
       {repositories.edges.map(({ node }) => (
         <div key={node.id} className="RepositoryItem">
           <RepositoryItem {...node} />
+          <Issues
+            repositoryName={node.name}
+            repositoryOwner={node.owner.login}
+          />
         </div>
       ))};
 
