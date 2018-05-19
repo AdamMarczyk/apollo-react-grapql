@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 import IssueItem from '../IssueItem';
 import Loading from '../../Loading';
 import ErrorMessage from '../../Error';
+import { ButtonUnobtrusive } from '../../Button';
 
 import './style.css';
 
@@ -33,11 +34,27 @@ const ISSUE_STATES = {
   CLOSED: 'CLOSED',
 };
 
+const TRANSITION_LABELS = {
+  [ISSUE_STATES.NONE]: 'Show Open Issues',
+  [ISSUE_STATES.OPEN]: 'Show Closed Issues',
+  [ISSUE_STATES.CLOSED]: 'Hide Issues',
+};
+
+const TRANSITION_STATE = {
+  [ISSUE_STATES.NONE]: ISSUE_STATES.OPEN,
+  [ISSUE_STATES.OPEN]: ISSUE_STATES.CLOSED,
+  [ISSUE_STATES.CLOSED]: ISSUE_STATES.NONE,
+};
+
 const isShow = issueState => issueState !== ISSUE_STATES.NONE;
 
 class Issues extends React.Component {
   state = {
     issueState: ISSUE_STATES.NONE,
+  };
+
+  onChangeIssueState = nextIssueState => {
+    this.setState({ issueState: nextIssueState });
   };
 
   render() {
@@ -46,6 +63,13 @@ class Issues extends React.Component {
 
     return (
       <div className="Issues">
+        <ButtonUnobtrusive
+          onClick={() =>
+            this.onChangeIssueState(TRANSITION_STATE[issueState])
+          }
+        >
+          {TRANSITION_LABELS[issueState]}
+        </ButtonUnobtrusive>
         {isShow(issueState) && (
           <Query
             query={GET_ISSUES_OF_REPOSITORY}
