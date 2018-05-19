@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Comments from '../../Comment';
 import Link from '../../Link';
 
 import './style.css';
@@ -14,7 +15,7 @@ const IssueItem = ({ issue }) => (
       </h3>
       <div dangerouslySetInnerHTML={{ __html: issue.bodyHTML }} />
 
-      {/* placeholder to render a list of comments later */}
+      <Comments />
     </div>
   </div>
 );
