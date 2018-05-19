@@ -7,7 +7,7 @@ import Loading from '../Loading';
 import ErrorMessage from '../Error';
 
 const GET_REPOSITORIES_OF_ORGANIZATION = gql`
-  query($organizationName: String!, $cursor: String!) {
+  query($organizationName: String!, $cursor: String) {
     organization(login: $organizationName) {
       repositories(first: 5, after: $cursor) {
         edges {
