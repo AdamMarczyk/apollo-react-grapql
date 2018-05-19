@@ -1,13 +1,21 @@
 import React from 'react';
+import { withState } from 'recompose';
 
 import Comments from '../../Comment';
 import Link from '../../Link';
+import { ButtonUnobtrusive } from '../../Button';
 
 import './style.css';
 
 const IssueItem = ({ issue }) => (
   <div className="IssueItem">
-    {/* placeholder to add a show/hide comment button later */}
+    <ButtonUnobtrusive
+      onClick={() =>
+        onToggleComments()
+      }
+    >
+      Show/Hide Comments
+    </ButtonUnobtrusive>
 
     <div className="IssueItem-content">
       <h3>
@@ -20,4 +28,8 @@ const IssueItem = ({ issue }) => (
   </div>
 );
 
-export default IssueItem;
+export default withState(
+  'showComments',
+  'onToggleComments',
+  false
+)(IssueItem);
