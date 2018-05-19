@@ -27,35 +27,56 @@ const GET_ISSUES_OF_REPOSITORY = gql`
   }
 `;
 
-const Issues = ({ repositoryOwner, repositoryName }) => (
-  <div className="Issues">
-    <Query
-      query={GET_ISSUES_OF_REPOSITORY}
-      variables={{
-        repositoryOwner,
-        repositoryName,
-      }}
-    >
-      {({ data, loading, error }) => {
-        if (error) {
-          return <ErrorMessage error={error} />;
-        }
+const ISSUE_STATES = {
+  NONE: 'NONE',
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+};
 
-        const { repository } = data;
+const isShow = issueState => issueState !== ISSUE_STATES.NONE;
 
-        if (loading && !repository) {
-          return <Loading />;
-        }
+class Issues extends React.Component {
+  state = {
+    issueState: ISSUE_STATES.NONE,
+  };
 
-        if (!repository.issues.edges.length) {
-          return <div className="IssueList">No issues ...</div>;
-        }
+  render() {
+    const { issueState } = this.state;
+    const { repositoryOwner, repositoryName } = this.props;
 
-        return <IssueList issues={repository.issues} />;
-      }}
-    </Query>
-  </div>
-);
+    return (
+      <div className="Issues">
+        {isShow(issueState) && (
+          <Query
+            query={GET_ISSUES_OF_REPOSITORY}
+            variables={{
+              repositoryOwner,
+              repositoryName,
+            }}
+          >
+            {({ data, loading, error }) => {
+              if (error) {
+                return <ErrorMessage error={error} />;
+              }
+
+              const { repository } = data;
+
+              if (loading && !repository) {
+                return <Loading />;
+              }
+
+              if (!repository.issues.edges.length) {
+                return <div className="IssueList">No issues ...</div>;
+              }
+
+              return <IssueList issues={repository.issues} />;
+            }}
+          </Query>
+        )}
+      </div>
+    );
+  }
+}
 
 const IssueList = ({ issues }) => (
   <div className="IssueList">
