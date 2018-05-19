@@ -7,37 +7,27 @@ import Input from '../../Input';
 
 import './style.css';
 
-class Navigation extends React.Component {
-  state = {
-    organizationName: 'facebook',
-  };
+const Navigation = ({
+  location: { pathname },
+  organizationName,
+  onOrganizationSearch,
+}) => (
+    <header className="Navigation">
+      <div className="Navigation-link">
+        <Link to={routes.PROFILE}>Profile</Link>
+      </div>
+      <div className="Navigation-link">
+        <Link to={routes.ORGANIZATION}>Organization</Link>
+      </div>
 
-  onOrganizationSearch = value => {
-    this.setState({ organizationName: value });
-  };
-
-  render() {
-    const { location: { pathname } } = this.props;
-
-    return (
-      <header className="Navigation">
-        <div className="Navigation-link">
-          <Link to={routes.PROFILE}>Profile</Link>
-        </div>
-        <div className="Navigation-link">
-          <Link to={routes.ORGANIZATION}>Organization</Link>
-        </div>
-
-        {pathname === routes.ORGANIZATION && (
-          <OrganizationSearch
-            organizationName={this.state.organizationName}
-            onOrganizationSearch={this.onOrganizationSearch}
-          />
-        )}
-      </header>
-    );
-  }
-};
+      {pathname === routes.ORGANIZATION && (
+        <OrganizationSearch
+          organizationName={organizationName}
+          onOrganizationSearch={onOrganizationSearch}
+        />
+      )}
+    </header>
+  );
 
 class OrganizationSearch extends React.Component {
   state = {
