@@ -7,26 +7,31 @@ import { ButtonUnobtrusive } from '../../Button';
 
 import './style.css';
 
-const IssueItem = ({ issue }) => (
-  <div className="IssueItem">
-    <ButtonUnobtrusive
-      onClick={() =>
-        onToggleComments()
-      }
-    >
-      Show/Hide Comments
+const IssueItem = ({
+  showComments,
+  onToggleComments,
+  issue,
+}) => (
+    <div className="IssueItem">
+      <ButtonUnobtrusive
+        onClick={() =>
+          onToggleComments(() => !showComments)
+        }
+      >
+        Show/Hide Comments
     </ButtonUnobtrusive>
 
-    <div className="IssueItem-content">
-      <h3>
-        <Link href={issue.url}>{issue.title}</Link>
-      </h3>
-      <div dangerouslySetInnerHTML={{ __html: issue.bodyHTML }} />
-
-      <Comments />
+      <div className="IssueItem-content">
+        <h3>
+          <Link href={issue.url}>{issue.title}</Link>
+        </h3>
+        <div dangerouslySetInnerHTML={{ __html: issue.bodyHTML }} />
+        {showComments &&
+          <Comments />
+        }
+      </div>
     </div>
-  </div>
-);
+  );
 
 export default withState(
   'showComments',
