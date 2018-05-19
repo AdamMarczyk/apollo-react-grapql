@@ -1,5 +1,5 @@
 import React from 'react';
-import { Query } from 'react-apollo';
+import { Query, ApolloConsumer } from 'react-apollo';
 import gql from 'graphql-tag';
 import { withState } from 'recompose';
 
@@ -52,7 +52,7 @@ const TRANSITION_STATE = {
 };
 
 const isShow = issueState => issueState !== ISSUE_STATES.NONE;
-
+const prefetchIssues = () => { };
 
 const Issues = ({
   repositoryOwner,
@@ -61,13 +61,11 @@ const Issues = ({
   onChangeIssueState,
 }) => (
     <div className="Issues">
-      <ButtonUnobtrusive
-        onClick={() =>
-          onChangeIssueState(TRANSITION_STATE[issueState])
-        }
-      >
-        {TRANSITION_LABELS[issueState]}
-      </ButtonUnobtrusive>
+      <IssueFilter
+        issueState={issueState}
+        onChangeIssueState={onChangeIssueState}
+      />
+
       {isShow(issueState) && (
         <Query
           query={GET_ISSUES_OF_REPOSITORY}
@@ -104,6 +102,22 @@ const IssueList = ({ issues }) => (
     ))}
   </div>
 );
+
+const IssueFilter = ({ issueState, onChangeIssueState }) => (
+  <ApolloConsumer>
+    {client => (
+      <ButtonUnobtrusive
+        onClick={() =>
+          onChangeIssueState(TRANSITION_STATE[issueState])
+        }
+        onMouseOver={() => prefetchIssues(client)}
+      >
+        {TRANSITION_LABELS[issueState]}
+      </ButtonUnobtrusive>
+    )}
+  </ApolloConsumer>
+);
+
 
 export default withState(
   'issueState',
