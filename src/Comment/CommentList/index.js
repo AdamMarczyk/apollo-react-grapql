@@ -10,7 +10,10 @@ import { ButtonUnobtrusive } from '../../Button';
 import './style.css';
 
 const Comments = () => (
-  <div>Comments</div>
+  <div>
+    Comments:
+    <CommentItem />
+  </div>
 );
 
 export default Comments;
