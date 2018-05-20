@@ -9,10 +9,70 @@ import { ButtonUnobtrusive } from '../../Button';
 
 import './style.css';
 
+const GET_COMMENTS_OF_ISSUE = gql`
+  query(
+    $repositoryOwner: String!,
+    $repositoryName: String!,
+    $number: Int!,
+    cursor: String,
+  ) {
+    repository(name: $repositoryName, owner: $repositoryOwner) {
+      issue(number: $number) {
+        id
+        comments(first: 1, after: $cursor) {
+          edges {
+            node {
+              id
+              bodyHTML
+              author {
+                login
+              }
+            }
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 const Comments = () => (
   <div>
-    Comments:
-    <CommentItem />
+    <Query
+      query={GET_COMMENTS_OF_ISSUE}
+      variables={{
+        repositoryOwner,
+        repositoryName,
+        number,
+      }}
+    >
+      {({ data, loading, error }) => {
+        if (error) {
+          return <ErrorMessage error={error} />;
+        }
+
+        const { repository } = data;
+
+        if (loading && !repository) {
+          return <Loading />;
+        }
+
+        return (
+          <CommentList comments={repository.issue.comments} />
+        );
+      }}
+    </Query>
+  </div>
+);
+
+const IssueList = ({ issues }) => (
+  <div className="IssueList">
+    {issues.edges.map(({ node }) => (
+      <IssueItem key={node.id} issue={node} />
+    ))}
   </div>
 );
 
