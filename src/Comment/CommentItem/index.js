@@ -4,7 +4,7 @@ import Link from '../../Link';
 
 import './style.css';
 
-const CommentItem = () => (
+const CommentItem = ({ comment }) => (
   <div className="CommentItem">
     Comment
   </div>

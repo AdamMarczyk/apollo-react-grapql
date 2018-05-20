@@ -68,10 +68,10 @@ const Comments = () => (
   </div>
 );
 
-const IssueList = ({ issues }) => (
-  <div className="IssueList">
-    {issues.edges.map(({ node }) => (
-      <IssueItem key={node.id} issue={node} />
+const CommentList = ({ comments }) => (
+  <div className="CommentList">
+    {comments.edges.map(({ node }) => (
+      <CommentItem key={node.id} comment={node} />
     ))}
   </div>
 );
