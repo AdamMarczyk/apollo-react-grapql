@@ -11,10 +11,10 @@ import './style.css';
 
 const GET_COMMENTS_OF_ISSUE = gql`
   query(
-    $repositoryOwner: String!,
-    $repositoryName: String!,
-    $number: Int!,
-    cursor: String,
+    $repositoryOwner: String!
+    $repositoryName: String!
+    $number: Int!
+    $cursor: String
   ) {
     repository(name: $repositoryName, owner: $repositoryOwner) {
       issue(number: $number) {
@@ -28,10 +28,10 @@ const GET_COMMENTS_OF_ISSUE = gql`
                 login
               }
             }
-            pageInfo {
-              endCursor
-              hasNextPage
-            }
+          }
+          pageInfo {
+            endCursor
+            hasNextPage
           }
         }
       }
@@ -39,34 +39,38 @@ const GET_COMMENTS_OF_ISSUE = gql`
   }
 `;
 
-const Comments = () => (
-  <div>
-    <Query
-      query={GET_COMMENTS_OF_ISSUE}
-      variables={{
-        repositoryOwner,
-        repositoryName,
-        number,
-      }}
-    >
-      {({ data, loading, error }) => {
-        if (error) {
-          return <ErrorMessage error={error} />;
-        }
+const Comments = ({
+  repositoryOwner,
+  repositoryName,
+  issue
+}) => (
+    <div>
+      <Query
+        query={GET_COMMENTS_OF_ISSUE}
+        variables={{
+          repositoryOwner,
+          repositoryName,
+          number: issue.number,
+        }}
+      >
+        {({ data, loading, error }) => {
+          if (error) {
+            return <ErrorMessage error={error} />;
+          }
 
-        const { repository } = data;
+          const { repository } = data;
 
-        if (loading && !repository) {
-          return <Loading />;
-        }
+          if (loading && !repository) {
+            return <Loading />;
+          }
 
-        return (
-          <CommentList comments={repository.issue.comments} />
-        );
-      }}
-    </Query>
-  </div>
-);
+          return (
+            <CommentList comments={repository.issue.comments} />
+          );
+        }}
+      </Query>
+    </div>
+  );
 
 const CommentList = ({ comments }) => (
   <div className="CommentList">
