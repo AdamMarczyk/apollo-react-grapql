@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import CommentItem from '../CommentItem';
+import CommentAdd from '../CommentAdd';
 import Loading from '../../Loading';
 import ErrorMessage from '../../Error';
 import FetchMore from '../../FetchMore';
@@ -92,11 +93,15 @@ const Comments = ({
           }
 
           return (
-            <CommentList
-              comments={repository.issue.comments}
-              loading={loading}
-              fetchMore={fetchMore}
-            />
+            <Fragment>
+              <CommentList
+                comments={repository.issue.comments}
+                loading={loading}
+                fetchMore={fetchMore}
+              />
+              <CommentAdd />
+            </Fragment>
+
           );
         }}
       </Query>
