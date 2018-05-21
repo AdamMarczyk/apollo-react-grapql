@@ -1,13 +1,16 @@
 import React from 'react';
 
-import Link from '../../Link';
-
 import './style.css';
 
-const CommentItem = ({ comment }) => (
+const Comment = ({ comment }) => (
   <div className="CommentItem">
-    Comment
+    {comment.author
+      ? <div>{comment.author.login}:</div>
+      : <div>Deleted user</div>
+    }
+    &nbsp;
+    <div dangerouslySetInnerHTML={{ __html: comment.bodyHTML }} />
   </div>
 );
 
-export default CommentItem;
+export default Comment;
