@@ -40,6 +40,31 @@ const GET_COMMENTS_OF_ISSUE = gql`
   }
 `;
 
+const updateQuery = (previousResult, { fetchMoreResult }) => {
+  if (!fetchMoreResult) {
+    return previousResult;
+  }
+
+  return {
+    ...previousResult,
+    repository: {
+      ...previousResult.repository,
+      issues: {
+        ...previousResult.repository.issue,
+        ...fetchMoreResult.repository.issue,
+        comments: {
+          ...previousResult.repository.issue.comments,
+          ...fetchMoreResult.repository.issue.comments,
+          edges: [
+            ...previousResult.repository.issue.comments.edges,
+            ...fetchMoreResult.repository.issue.comments.edges,
+          ]
+        },
+      },
+    },
+  };
+};
+
 const Comments = ({
   repositoryOwner,
   repositoryName,
@@ -70,7 +95,6 @@ const Comments = ({
               comments={repository.issue.comments}
               loading={loading}
               fetchMore={fetchMore}
-              entry={entry}
             />
           );
         }}
@@ -82,7 +106,6 @@ const CommentList = ({
   comments,
   loading,
   fetchMore,
-  entry
 }) => (
     <div className="CommentList">
       {comments.edges.map(({ node }) => (
@@ -94,7 +117,7 @@ const CommentList = ({
         variables={{
           cursor: comments.pageInfo.endCursor,
         }}
-        updateQuery={getUpdateQuery(entry)}
+        updateQuery={updateQuery}
         fetchMore={fetchMore}
       >
         Comments
