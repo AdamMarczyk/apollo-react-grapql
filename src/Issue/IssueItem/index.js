@@ -10,6 +10,8 @@ import './style.css';
 const IssueItem = ({
   showComments,
   onToggleComments,
+  repositoryOwner,
+  repositoryName,
   issue,
 }) => (
     <div className="IssueItem">
@@ -30,7 +32,11 @@ const IssueItem = ({
         </h3>
         <div dangerouslySetInnerHTML={{ __html: issue.bodyHTML }} />
         {showComments &&
-          <Comments />
+          <Comments
+            repositoryOwner={repositoryOwner}
+            repositoryName={repositoryName}
+            issue={issue}
+          />
         }
       </div>
     </div>

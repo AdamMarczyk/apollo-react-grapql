@@ -108,7 +108,11 @@ const Issues = ({
             }
 
             return (
-              <IssueList issues={repository.issues} />
+              <IssueList
+                repositoryOwner={repositoryOwner}
+                repositoryName={repositoryName}
+                issues={repository.issues}
+              />
             );
           }}
         </Query>
@@ -116,13 +120,22 @@ const Issues = ({
     </div>
   );
 
-const IssueList = ({ issues }) => (
-  <div className="IssueList">
-    {issues.edges.map(({ node }) => (
-      <IssueItem key={node.id} issue={node} />
-    ))}
-  </div>
-);
+const IssueList = ({
+  repositoryOwner,
+  repositoryName,
+  issues
+}) => (
+    <div className="IssueList">
+      {issues.edges.map(({ node }) => (
+        <IssueItem
+          key={node.id}
+          repositoryOwner={repositoryOwner}
+          repositoryName={repositoryName}
+          issue={node}
+        />
+      ))}
+    </div>
+  );
 
 const IssueFilter = ({
   issueState,
