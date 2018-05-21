@@ -42,7 +42,8 @@ const GET_COMMENTS_OF_ISSUE = gql`
 const Comments = ({
   repositoryOwner,
   repositoryName,
-  issue
+  issue,
+  fetchMore
 }) => (
     <div>
       <Query
@@ -53,7 +54,7 @@ const Comments = ({
           number: issue.number,
         }}
       >
-        {({ data, loading, error }) => {
+        {({ data, loading, error, fetchMore }) => {
           if (error) {
             return <ErrorMessage error={error} />;
           }
@@ -65,18 +66,33 @@ const Comments = ({
           }
 
           return (
-            <CommentList comments={repository.issue.comments} />
+            <CommentList
+              comments={repository.issue.comments}
+              fetchMore={fetchMore}
+            />
           );
         }}
       </Query>
     </div>
   );
 
-const CommentList = ({ comments }) => (
+const CommentList = ({ comments, fetchMore }) => (
   <div className="CommentList">
     {comments.edges.map(({ node }) => (
       <CommentItem key={node.id} comment={node} />
     ))}
+    {comments.pageInfo.hasNextPage && (
+      <button
+        type="button"
+        onClick={() =>
+          fetchMore({
+            /* configuration object */
+          })
+        }
+      >
+        More Comments
+      </button>
+    )}
   </div>
 );
 
