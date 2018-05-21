@@ -49,7 +49,7 @@ const updateQuery = (previousResult, { fetchMoreResult }) => {
     ...previousResult,
     repository: {
       ...previousResult.repository,
-      issues: {
+      issue: {
         ...previousResult.repository.issue,
         ...fetchMoreResult.repository.issue,
         comments: {
@@ -58,7 +58,7 @@ const updateQuery = (previousResult, { fetchMoreResult }) => {
           edges: [
             ...previousResult.repository.issue.comments.edges,
             ...fetchMoreResult.repository.issue.comments.edges,
-          ]
+          ],
         },
       },
     },
@@ -73,6 +73,7 @@ const Comments = ({
     <div>
       <Query
         query={GET_COMMENTS_OF_ISSUE}
+        notifyOnNetworkStatusChange={true}
         variables={{
           repositoryOwner,
           repositoryName,
