@@ -99,7 +99,7 @@ const Comments = ({
                 loading={loading}
                 fetchMore={fetchMore}
               />
-              <CommentAdd />
+              <CommentAdd issueId={repository.issue.id} />
             </Fragment>
 
           );
