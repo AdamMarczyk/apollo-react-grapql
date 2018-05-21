@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 import CommentItem from '../CommentItem';
 import Loading from '../../Loading';
 import ErrorMessage from '../../Error';
+import FetchMore from '../../FetchMore';
 import { ButtonUnobtrusive } from '../../Button';
 
 import './style.css';
@@ -43,7 +44,6 @@ const Comments = ({
   repositoryOwner,
   repositoryName,
   issue,
-  fetchMore
 }) => (
     <div>
       <Query
@@ -68,7 +68,9 @@ const Comments = ({
           return (
             <CommentList
               comments={repository.issue.comments}
+              loading={loading}
               fetchMore={fetchMore}
+              entry={entry}
             />
           );
         }}
@@ -76,24 +78,28 @@ const Comments = ({
     </div>
   );
 
-const CommentList = ({ comments, fetchMore }) => (
-  <div className="CommentList">
-    {comments.edges.map(({ node }) => (
-      <CommentItem key={node.id} comment={node} />
-    ))}
-    {comments.pageInfo.hasNextPage && (
-      <button
-        type="button"
-        onClick={() =>
-          fetchMore({
-            /* configuration object */
-          })
-        }
+const CommentList = ({
+  comments,
+  loading,
+  fetchMore,
+  entry
+}) => (
+    <div className="CommentList">
+      {comments.edges.map(({ node }) => (
+        <CommentItem key={node.id} comment={node} />
+      ))}
+      <FetchMore
+        loading={loading}
+        hasNextPage={comments.pageInfo.hasNextPage}
+        variables={{
+          cursor: comments.pageInfo.endCursor,
+        }}
+        updateQuery={getUpdateQuery(entry)}
+        fetchMore={fetchMore}
       >
-        More Comments
-      </button>
-    )}
-  </div>
-);
+        Comments
+    </FetchMore>
+    </div>
+  );
 
 export default Comments;
