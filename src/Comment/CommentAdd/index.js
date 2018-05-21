@@ -40,6 +40,20 @@ class CommentAdd extends React.Component {
       <Mutation
         mutation={ADD_COMMENT}
         variables={{ body: value, subjectId: issueId }}
+        optimisticResponse={{
+          __typename: 'Mutation',
+          addComment: {
+            __typename: 'Comment',
+            body: value,
+            subjectId: issueId,
+          },
+        }}
+        update={(proxy, { data: { addComment } }) => {
+          const data = proxy.readQuery({ query: ADD_COMMENT });
+          data.comments.push(addComment);
+          proxy.writeQuery({ query: ADD_COMMENT, data })
+        }
+        }
       >
         {(addComment, { data, loading, error }) => (
           <div>
