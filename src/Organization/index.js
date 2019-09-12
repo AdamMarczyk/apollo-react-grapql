@@ -1,10 +1,10 @@
-import React from 'react';
 import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
-
-import RepositoryList, { REPOSITORY_FRAGMENT } from '../Repository';
-import Loading from '../Loading';
+import React from 'react';
+import { useQuery } from 'react-apollo';
 import ErrorMessage from '../Error';
+import Loading from '../Loading';
+import RepositoryList, { REPOSITORY_FRAGMENT } from '../Repository';
+
 
 const GET_REPOSITORIES_OF_ORGANIZATION = gql`
   query($organizationName: String!, $cursor: String) {
@@ -25,36 +25,34 @@ const GET_REPOSITORIES_OF_ORGANIZATION = gql`
   ${REPOSITORY_FRAGMENT}
 `;
 
-const Organization = ({ organizationName }) => (
-  <Query
-    query={GET_REPOSITORIES_OF_ORGANIZATION}
-    variables={{
-      organizationName,
-    }}
-    skip={organizationName === ''}
-    notifyOnNetworkStatusChange={true}
-  >
-    {({ data, loading, error, fetchMore }) => {
-      if (error) {
-        return <ErrorMessage error={error} />;
-      }
+const Organization = ({ organizationName }) => {
+  const { loading, error, data, fetchMore } = useQuery(GET_REPOSITORIES_OF_ORGANIZATION, {
+    variables: {
+      organizationName
+    },
+    notifyOnNetworkStatusChange: true,
+    skip: !organizationName
+  });
 
-      const { organization } = data;
+  if (error) {
+    return <ErrorMessage error={error} />;
+  }
 
-      if (loading && !organization) {
-        return <Loading />;
-      }
+  const { organization } = data || {};
 
-      return (
-        <RepositoryList
-          loading={loading}
-          repositories={organization.repositories}
-          fetchMore={fetchMore}
-          entry={'organization'}
-        />
-      );
-    }}
-  </Query>
-);
+  if (loading && !organization) {
+    return <Loading />;
+  }
+
+  return (
+    <RepositoryList
+      loading={loading}
+      repositories={organization.repositories}
+      fetchMore={fetchMore}
+      entry={'organization'}
+    />
+  );
+};
+
 
 export default Organization;

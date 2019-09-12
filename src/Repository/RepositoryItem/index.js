@@ -1,9 +1,9 @@
-import React from 'react';
 import gql from 'graphql-tag';
+import React from 'react';
 import { Mutation } from 'react-apollo';
-import REPOSITORY_FRAGMENT from '../fragments';
-import Link from '../../Link';
 import Button from '../../Button';
+import Link from '../../Link';
+import REPOSITORY_FRAGMENT from '../fragments';
 import '../style.css';
 
 const STAR_REPOSITORY = gql`
@@ -47,7 +47,7 @@ const VIEWER_SUBSCRIPTIONS = {
 };
 
 const isWatch = viewerSubscription => {
-  viewerSubscription === viewerSubscription.SUBSCRIBED;
+  // viewerSubscription === viewerSubscription.SUBSCRIBED;
 };
 
 const updateWatch = (
