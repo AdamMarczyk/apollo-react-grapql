@@ -1,15 +1,14 @@
-import React, { Fragment } from 'react';
-import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-
-import CommentItem from '../CommentItem';
-import CommentAdd from '../CommentAdd';
-import Loading from '../../Loading';
+import React, { Fragment } from 'react';
+import { useQuery } from 'react-apollo';
 import ErrorMessage from '../../Error';
 import FetchMore from '../../FetchMore';
-import { ButtonUnobtrusive } from '../../Button';
-
+import Loading from '../../Loading';
+import CommentAdd from '../CommentAdd';
+import CommentItem from '../CommentItem';
 import './style.css';
+
+
 
 export const GET_COMMENTS_OF_ISSUE = gql`
   query(
@@ -70,43 +69,38 @@ const Comments = ({
   repositoryOwner,
   repositoryName,
   issue,
-}) => (
-    <div>
-      <Query
-        query={GET_COMMENTS_OF_ISSUE}
-        notifyOnNetworkStatusChange={true}
-        variables={{
-          repositoryOwner,
-          repositoryName,
-          number: issue.number,
-        }}
-      >
-        {({ data, loading, error, fetchMore }) => {
-          if (error) {
-            return <ErrorMessage error={error} />;
-          }
+}) => {
+  const { loading, error, data, fetchMore } = useQuery(GET_COMMENTS_OF_ISSUE, {
+    variables: {
+      repositoryOwner,
+      repositoryName,
+      number: issue.number,
 
-          const { repository } = data;
+    },
+    notifyOnNetworkStatusChange: true,
+  });
+  if (error) {
+    return <ErrorMessage error={error} />;
+  }
 
-          if (loading && !repository) {
-            return <Loading />;
-          }
+  const { repository } = data || {};
 
-          return (
-            <Fragment>
-              <CommentList
-                comments={repository.issue.comments}
-                loading={loading}
-                fetchMore={fetchMore}
-              />
-              <CommentAdd issueId={repository.issue.id} />
-            </Fragment>
+  if (loading && !repository) {
+    return <Loading />;
+  }
 
-          );
-        }}
-      </Query>
-    </div>
+  return (
+    <Fragment>
+      <CommentList
+        comments={repository.issue.comments}
+        loading={loading}
+        fetchMore={fetchMore}
+      />
+      <CommentAdd issueId={repository.issue.id} />
+    </Fragment>
+
   );
+};
 
 const CommentList = ({
   comments,
