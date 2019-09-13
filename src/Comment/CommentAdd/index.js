@@ -32,7 +32,7 @@ const CommentAdd = (props) => {
   };
 
   const { issueId } = props;
-  const [addComment, { data, loading, error }] = useMutation(ADD_COMMENT, {
+  const [addComment, { error }] = useMutation(ADD_COMMENT, {
     variables: { body: value, subjectId: issueId },
     optimisticResponse: {
       __typename: 'Mutation',
