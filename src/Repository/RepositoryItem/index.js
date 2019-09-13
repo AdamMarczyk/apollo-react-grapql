@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import React from 'react';
-import { Mutation } from 'react-apollo';
+import { useMutation } from 'react-apollo';
 import Button from '../../Button';
 import Link from '../../Link';
 import REPOSITORY_FRAGMENT from '../fragments';
@@ -119,7 +119,47 @@ const RepositoryItem = ({
   watchers,
   viewerSubscription,
   viewerHasStarred,
-}) => (
+}) => {
+
+  const [updateSubscription] = useMutation(WATCH_REPOSITORY, {
+    variables: {
+      id,
+      viewerSubscription: isWatch(viewerSubscription)
+        ? VIEWER_SUBSCRIPTIONS.UNSUBSCRIBED
+        : VIEWER_SUBSCRIPTIONS.SUBSCRIBED,
+    },
+    optimisticResponse: {
+      updateSubscription: {
+        __typename: 'Mutation',
+        starrable: {
+          __typename: 'Repository',
+          id
+        },
+      },
+    },
+    update: updateWatch,
+  });
+
+  const [addStar] = useMutation(STAR_REPOSITORY, {
+    variables: {
+      id,
+    },
+    optimisticResponse: {
+      addStar: {
+        __typename: 'Mutation',
+        subscribable: {
+          __typename: 'Repository',
+          id,
+          viewerSubscription: isWatch(viewerSubscription)
+            ? VIEWER_SUBSCRIPTIONS.SUBSCRIBED
+            : VIEWER_SUBSCRIPTIONS.UNSUBSCRIBED,
+        },
+      },
+    },
+    update: updateAddStar,
+  });
+
+  return (
     <div>
       <div className="RepositoryItem-title">
         <h2>
@@ -127,62 +167,21 @@ const RepositoryItem = ({
         </h2>
 
         <div className="RepositoryItem-title-action">
-          <Mutation
-            mutation={WATCH_REPOSITORY}
-            variables={{
-              id,
-              viewerSubscription: isWatch(viewerSubscription)
-                ? VIEWER_SUBSCRIPTIONS.UNSUBSCRIBED
-                : VIEWER_SUBSCRIPTIONS.SUBSCRIBED,
-            }}
-            optimisticResponse={{
-              updateSubscription: {
-                __typename: 'Mutation',
-                starrable: {
-                  __typename: 'Repository',
-                  id
-                },
-              },
-            }}
-            update={updateWatch}
+          <Button
+            className="RepositoryItem-title-action"
+            onClick={updateSubscription}
           >
-            {(updateSubscription, { data, loading, error }) => (
-              <Button
-                className="RepositoryItem-title-action"
-                onClick={updateSubscription}
-              >
-                {watchers.totalCount}{' '}
-                {isWatch(viewerSubscription) ? 'Unwatch' : 'Watch'}
-              </Button>
-            )}
-          </Mutation>
+            {watchers.totalCount}{' '}
+            {isWatch(viewerSubscription) ? 'Unwatch' : 'Watch'}
+          </Button>
+
           {!viewerHasStarred ? (
-            <Mutation
-              mutation={STAR_REPOSITORY}
-              variables={{ id }}
-              optimisticResponse={{
-                addStar: {
-                  __typename: 'Mutation',
-                  subscribable: {
-                    __typename: 'Repository',
-                    id,
-                    viewerSubscription: isWatch(viewerSubscription)
-                      ? VIEWER_SUBSCRIPTIONS.SUBSCRIBED
-                      : VIEWER_SUBSCRIPTIONS.UNSUBSCRIBED,
-                  },
-                },
-              }}
-              update={updateAddStar}
+            <Button
+              className={'RepositoryItem-title-action'}
+              onClick={addStar}
             >
-              {(addStar, { data, loading, error }) => (
-                <Button
-                  className={'RepositoryItem-title-action'}
-                  onClick={addStar}
-                >
-                  {stargazers.totalCount} Star
+              {stargazers.totalCount} Star
               </Button>
-              )}
-            </Mutation>
           ) : (
               <span>{/* remove star mutation */}</span>
             )}
@@ -209,7 +208,8 @@ const RepositoryItem = ({
           </div>
         </div>
       </div>
-    </div >
-  );
+    </div>
+  )
+};
 
 export default RepositoryItem;
