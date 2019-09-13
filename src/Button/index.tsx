@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import './style.css';
 
 interface IButtonProps {
-  children?: any;
+  children?: ReactNode[] | ReactNode;
   className?: string;
   color?: string;
   type?: "button" | "submit" | "reset" | undefined;
+  onClick?: () => void;
 }
 
 const Button = ({

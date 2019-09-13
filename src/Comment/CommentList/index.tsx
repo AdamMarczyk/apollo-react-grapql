@@ -40,7 +40,7 @@ export const GET_COMMENTS_OF_ISSUE = gql`
   }
 `;
 
-const updateQuery = (previousResult, { fetchMoreResult }) => {
+const updateQuery = (previousResult: any, { fetchMoreResult }: any) => {
   if (!fetchMoreResult) {
     return previousResult;
   }
@@ -65,11 +65,19 @@ const updateQuery = (previousResult, { fetchMoreResult }) => {
   };
 };
 
+interface ICommentsProps {
+  repositoryOwner: string;
+  repositoryName: string;
+  issue: {
+    number: string;
+  };
+}
+
 const Comments = ({
   repositoryOwner,
   repositoryName,
   issue,
-}) => {
+}: ICommentsProps) => {
   const { loading, error, data, fetchMore } = useQuery(GET_COMMENTS_OF_ISSUE, {
     variables: {
       repositoryOwner,
@@ -102,11 +110,33 @@ const Comments = ({
   );
 };
 
+interface ICommentListProps {
+  comments: {
+    edges: [
+      {
+        node: {
+          id: number;
+          author: {
+            login: string;
+          },
+          bodyHTML: string;
+        }
+      }
+    ],
+    pageInfo: {
+      hasNextPage: boolean;
+      endCursor: number;
+    }
+  };
+  loading: boolean;
+  fetchMore: any;
+}
+
 const CommentList = ({
   comments,
   loading,
   fetchMore,
-}) => (
+}: ICommentListProps) => (
     <div className="CommentList">
       {comments.edges.map(({ node }) => (
         <CommentItem key={node.id} comment={node} />

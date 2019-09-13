@@ -1,8 +1,17 @@
 import React from 'react';
-
 import './style.css';
 
-const Comment = ({ comment }) => (
+
+interface ICommentProps {
+  comment: {
+    author: {
+      login: string;
+    },
+    bodyHTML: string;
+  };
+}
+
+const Comment = ({ comment }: ICommentProps) => (
   <div className="CommentItem">
     {comment.author
       ? <div>{comment.author.login}:</div>

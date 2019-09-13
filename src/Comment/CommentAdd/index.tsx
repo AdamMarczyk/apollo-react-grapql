@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import React from 'react';
+import React, { FormEvent } from 'react';
 import { useMutation } from 'react-apollo';
 import Button from '../../Button';
 import ErrorMessage from '../../Error';
@@ -18,14 +18,18 @@ const ADD_COMMENT = gql`
   }
 `;
 
-const CommentAdd = (props) => {
+interface ICommentAddProps {
+  issueId: string;
+}
+
+const CommentAdd = (props: ICommentAddProps) => {
   const [value, setValue] = React.useState("");
 
-  const onChange = value => {
+  const onChange = (value: string) => {
     setValue(value);
   };
 
-  const onSubmit = (event, addComment) => {
+  const onSubmit = (event: FormEvent<HTMLFormElement>, addComment: any) => {
     addComment().then(() => setValue(""));
 
     event.preventDefault();
@@ -42,9 +46,9 @@ const CommentAdd = (props) => {
         subjectId: issueId,
       },
     },
-    update: (proxy, { data: { addComment } }) => {
-      const data = proxy.readQuery({ query: ADD_COMMENT });
-      data.comments.push(addComment);
+    update: (proxy, { data }) => {
+      const dataReadQuery: any = proxy.readQuery({ query: ADD_COMMENT });
+      dataReadQuery.comments.push(data && data.addComment);
       proxy.writeQuery({ query: ADD_COMMENT, data })
     }
   });
@@ -56,7 +60,7 @@ const CommentAdd = (props) => {
       <form onSubmit={e => onSubmit(e, addComment)}>
         <TextArea
           value={value}
-          onChange={e => onChange(e.target.value)}
+          onChange={(e: any) => onChange(e.target.value)}
           placeholder="Leave a comment"
         />
         <Button type="submit">Comment</Button>

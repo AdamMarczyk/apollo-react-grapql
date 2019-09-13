@@ -1,7 +1,16 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
+import { ButtonUnobtrusive } from '../Button';
 import Loading from '../Loading';
-import Button, { ButtonUnobtrusive } from '../Button';
 import './style.css';
+
+interface IFetchMoreProps {
+  loading: boolean;
+  hasNextPage: boolean;
+  variables: any;
+  updateQuery: any;
+  fetchMore: any;
+  children: ReactNode[] | ReactNode;
+}
 
 const FetchMore = ({
   loading,
@@ -10,7 +19,7 @@ const FetchMore = ({
   updateQuery,
   fetchMore,
   children,
-}) => (
+}: IFetchMoreProps) => (
     <div className="FetchMore">
       {loading ? (
         <Loading />
