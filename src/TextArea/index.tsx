@@ -1,8 +1,12 @@
 import React from 'react';
-
 import './style.css';
 
-const TextArea = ({ children, ...props }) => (
+
+interface ITextAreaProps {
+  children?: any;
+}
+
+const TextArea = ({ children, ...props }: ITextAreaProps) => (
   <textarea className={`TextArea`} {...props}>
     {children}
   </textarea>

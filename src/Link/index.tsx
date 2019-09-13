@@ -1,6 +1,10 @@
 import React from 'react';
 
-const Link = ({ children, ...props }) => (
+interface ILinkProps {
+  children?: any;
+}
+
+const Link = ({ children, ...props }: ILinkProps) => (
   <a {...props} target="_blank">
     {children}
   </a>
