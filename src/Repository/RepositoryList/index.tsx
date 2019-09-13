@@ -1,14 +1,13 @@
 import React, { Fragment } from 'react';
-import Loading from '../../Loading';
 import FetchMore from '../../FetchMore';
-import RepositoryItem from '../RepositoryItem';
 import Issues from '../../Issue';
-
+import RepositoryItem from '../RepositoryItem';
 import '../style.css';
 
-const getUpdateQuery = entry => (
-  previousResult,
-  { fetchMoreResult },
+
+const getUpdateQuery = (entry: any) => (
+  previousResult: any,
+  { fetchMoreResult }: any,
 ) => {
   if (!fetchMoreResult) {
     return previousResult;
@@ -30,12 +29,47 @@ const getUpdateQuery = entry => (
   }
 };
 
+interface IRepositoryListProps {
+  repositories: {
+    edges: [{
+      node: {
+        id: string;
+        name: string;
+        url: string;
+        descriptionHTML: string;
+        primaryLanguage: {
+          name: string,
+        };
+        owner: {
+          url: string,
+          login: string,
+        };
+        stargazers: {
+          totalCount: number;
+        }
+        watchers: {
+          totalCount: number;
+        };
+        viewerSubscription: string;
+        viewerHasStarred: boolean;
+      }
+    }],
+    pageInfo: {
+      hasNextPage: boolean;
+      endCursor: number;
+    }
+  };
+  loading: boolean;
+  fetchMore: any;
+  entry: any;
+}
+
 const RepositoryList = ({
   repositories,
   loading,
   fetchMore,
   entry
-}) => (
+}: IRepositoryListProps) => (
     <Fragment>
       {repositories.edges.map(({ node }) => (
         <div key={node.id} className="RepositoryItem">

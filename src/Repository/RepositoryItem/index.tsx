@@ -46,19 +46,30 @@ const VIEWER_SUBSCRIPTIONS = {
   UNSUBSCRIBED: 'UNSUBSCRIBED',
 };
 
-const isWatch = viewerSubscription => {
-  // viewerSubscription === viewerSubscription.SUBSCRIBED;
+const isWatch = (viewerSubscription: string) => {
+  return viewerSubscription === VIEWER_SUBSCRIPTIONS.SUBSCRIBED;
 };
 
+interface IUpdateWatchData {
+  data: {
+    updateSubscription: {
+      subscribable: {
+        id: any;
+        viewerSubscription: any;
+      }
+    }
+  }
+}
+
 const updateWatch = (
-  client,
+  client: any,
   {
     data: {
       updateSubscription: {
         subscribable: { id, viewerSubscription },
       },
     },
-  },
+  }: IUpdateWatchData,
 ) => {
   const repository = client.readFragment({
     id: `Repository:${id}`,
@@ -84,9 +95,19 @@ const updateWatch = (
   });
 };
 
+interface IUpdateAddStarData {
+  data: {
+    addStar: {
+      starrable: {
+        id: any;
+      }
+    }
+  }
+}
+
 const updateAddStar = (
-  client,
-  { data: { addStar: { starrable: { id } } } }
+  client: any,
+  { data: { addStar: { starrable: { id } } } }: IUpdateAddStarData
 ) => {
   const repository = client.readFragment({
     id: `Repository:${id}`,
@@ -108,6 +129,28 @@ const updateAddStar = (
   });
 };
 
+interface IRepositoryItemProps {
+  id: string;
+  name: string;
+  url: string;
+  descriptionHTML: string;
+  primaryLanguage: {
+    name: string,
+  };
+  owner: {
+    url: string,
+    login: string,
+  };
+  stargazers: {
+    totalCount: number;
+  }
+  watchers: {
+    totalCount: number;
+  };
+  viewerSubscription: string;
+  viewerHasStarred: boolean;
+}
+
 const RepositoryItem = ({
   id,
   name,
@@ -119,8 +162,9 @@ const RepositoryItem = ({
   watchers,
   viewerSubscription,
   viewerHasStarred,
-}) => {
+}: IRepositoryItemProps) => {
 
+  // @ts-ignore
   const [updateSubscription] = useMutation(WATCH_REPOSITORY, {
     variables: {
       id,
@@ -139,7 +183,7 @@ const RepositoryItem = ({
     },
     update: updateWatch,
   });
-
+  // @ts-ignore
   const [addStar] = useMutation(STAR_REPOSITORY, {
     variables: {
       id,

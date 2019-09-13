@@ -7,6 +7,7 @@ interface IButtonProps {
   color?: string;
   type?: "button" | "submit" | "reset" | undefined;
   onClick?: () => void;
+  onMouseOver?: () => void;
 }
 
 const Button = ({

@@ -2,6 +2,7 @@ import React from 'react';
 
 interface ILinkProps {
   children?: any;
+  href?: string;
 }
 
 const Link = ({ children, ...props }: ILinkProps) => (

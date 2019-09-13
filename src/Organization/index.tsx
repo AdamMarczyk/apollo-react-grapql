@@ -25,7 +25,11 @@ const GET_REPOSITORIES_OF_ORGANIZATION = gql`
   ${REPOSITORY_FRAGMENT}
 `;
 
-const Organization = ({ organizationName }) => {
+interface IOrganizationProps {
+  organizationName: string;
+}
+
+const Organization = ({ organizationName }: IOrganizationProps) => {
   const { loading, error, data, fetchMore } = useQuery(GET_REPOSITORIES_OF_ORGANIZATION, {
     variables: {
       organizationName

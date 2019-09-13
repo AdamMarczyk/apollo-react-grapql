@@ -49,13 +49,13 @@ const TRANSITION_STATE = {
   [ISSUE_STATES.CLOSED]: ISSUE_STATES.NONE,
 };
 
-const isShow = issueState => issueState !== ISSUE_STATES.NONE;
+const isShow = (issueState: string) => issueState !== ISSUE_STATES.NONE;
 
 const prefetchIssues = (
-  client,
-  repositoryOwner,
-  repositoryName,
-  issueState,
+  client: any,
+  repositoryOwner: string,
+  repositoryName: string,
+  issueState: string,
 ) => {
   const nextIssueState = TRANSITION_STATE[issueState];
 
@@ -71,12 +71,19 @@ const prefetchIssues = (
   }
 };
 
+interface IIssuesProps {
+  repositoryOwner: string;
+  repositoryName: string;
+  issueState: string;
+  onChangeIssueState: any;
+}
+
 const Issues = ({
   repositoryOwner,
   repositoryName,
   issueState,
   onChangeIssueState,
-}) => {
+}: IIssuesProps) => {
   const { loading, error, data } = useQuery(GET_ISSUES_OF_REPOSITORY, {
     variables: {
       repositoryOwner,
@@ -118,11 +125,25 @@ const Issues = ({
   )
 };
 
+interface IIssueListProps {
+  repositoryOwner: string;
+  repositoryName: string;
+  issues: {
+    edges: [
+      {
+        node: {
+          id: string;
+        }
+      }
+    ]
+  }
+}
+
 const IssueList = ({
   repositoryOwner,
   repositoryName,
   issues
-}) => (
+}: IIssueListProps) => (
     <div className="IssueList">
       {issues.edges.map(({ node }) => (
         <IssueItem
@@ -135,12 +156,19 @@ const IssueList = ({
     </div>
   );
 
+interface IIssueFilterProps {
+  issueState: string;
+  onChangeIssueState: any;
+  repositoryOwner: string;
+  repositoryName: string;
+}
+
 const IssueFilter = ({
   issueState,
   onChangeIssueState,
   repositoryOwner,
   repositoryName,
-}) => (
+}: IIssueFilterProps) => (
     <ApolloConsumer>
       {client => (
         <ButtonUnobtrusive

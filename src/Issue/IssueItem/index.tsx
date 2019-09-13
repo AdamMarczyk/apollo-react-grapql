@@ -1,15 +1,15 @@
 import React from 'react';
 import { ApolloConsumer } from 'react-apollo';
 import { withState } from 'recompose';
-
-import Comments from '../../Comment';
-import Link from '../../Link';
 import { ButtonUnobtrusive } from '../../Button';
+import Comments from '../../Comment';
 import { GET_COMMENTS_OF_ISSUE } from '../../Comment/CommentList';
-
+import Link from '../../Link';
 import './style.css';
 
-const prefetchComments = (repositoryOwner, repositoryName, number, client) => {
+
+
+const prefetchComments = (repositoryOwner: string, repositoryName: string, number: number, client: any) => {
   client.query({
     query: GET_COMMENTS_OF_ISSUE,
     variables: {
@@ -20,6 +20,18 @@ const prefetchComments = (repositoryOwner, repositoryName, number, client) => {
   });
 };
 
+interface IIssueItemProps {
+  showComments: boolean;
+  onToggleComments: (fn: Function) => void;
+  repositoryOwner: string;
+  repositoryName: string;
+  issue: {
+    number: any;
+    url: string;
+    title: string;
+    bodyHTML: string;
+  };
+}
 
 const IssueItem = ({
   showComments,
@@ -27,7 +39,7 @@ const IssueItem = ({
   repositoryOwner,
   repositoryName,
   issue,
-}) => (
+}: any) => (
     <div className="IssueItem">
       <ApolloConsumer>
         {client => (
