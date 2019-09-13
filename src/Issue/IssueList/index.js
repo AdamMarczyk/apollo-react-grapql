@@ -1,13 +1,11 @@
-import React from 'react';
-import { Query, ApolloConsumer } from 'react-apollo';
 import gql from 'graphql-tag';
+import React from 'react';
+import { ApolloConsumer, useQuery } from 'react-apollo';
 import { withState } from 'recompose';
-
-import IssueItem from '../IssueItem';
-import Loading from '../../Loading';
-import ErrorMessage from '../../Error';
 import { ButtonUnobtrusive } from '../../Button';
-
+import ErrorMessage from '../../Error';
+import Loading from '../../Loading';
+import IssueItem from '../IssueItem';
 import './style.css';
 
 const GET_ISSUES_OF_REPOSITORY = gql`
@@ -78,7 +76,36 @@ const Issues = ({
   repositoryName,
   issueState,
   onChangeIssueState,
-}) => (
+}) => {
+  const { loading, error, data } = useQuery(GET_ISSUES_OF_REPOSITORY, {
+    variables: {
+      repositoryOwner,
+      repositoryName,
+      issueState,
+    },
+  });
+
+  const renderIssueList = () => {
+    if (error) {
+      return <ErrorMessage error={error} />;
+    }
+
+    const { repository } = data || {};
+
+    if (loading && !repository) {
+      return <Loading />;
+    }
+
+    return (
+      <IssueList
+        repositoryOwner={repositoryOwner}
+        repositoryName={repositoryName}
+        issues={repository.issues}
+      />
+    );
+  }
+
+  return (
     <div className="Issues">
       <IssueFilter
         repositoryOwner={repositoryOwner}
@@ -86,39 +113,10 @@ const Issues = ({
         issueState={issueState}
         onChangeIssueState={onChangeIssueState}
       />
-
-      {isShow(issueState) && (
-        <Query
-          query={GET_ISSUES_OF_REPOSITORY}
-          variables={{
-            repositoryOwner,
-            repositoryName,
-            issueState,
-          }}
-        >
-          {({ data, loading, error }) => {
-            if (error) {
-              return <ErrorMessage error={error} />;
-            }
-
-            const { repository } = data;
-
-            if (loading && !repository) {
-              return <Loading />;
-            }
-
-            return (
-              <IssueList
-                repositoryOwner={repositoryOwner}
-                repositoryName={repositoryName}
-                issues={repository.issues}
-              />
-            );
-          }}
-        </Query>
-      )}
+      {isShow(issueState) && renderIssueList()}
     </div>
-  );
+  )
+};
 
 const IssueList = ({
   repositoryOwner,
